@@ -30,7 +30,7 @@ module Devise
         @ldap.auth ldap_config["admin_user"], ldap_config["admin_password"] if params[:admin]
         @ldap.auth params[:login], params[:password] if ldap_config["admin_as_user"]
 
-        @login = params[:login]
+        @login = params[:login].split('@')[0]
         @password = params[:password]
         @new_password = params[:new_password]
       end
@@ -75,6 +75,7 @@ module Devise
 
       def authenticate!
         return false unless (@password.present? || @allow_unauthenticated_bind)
+        return false unless dn.include?("OU=Personeel")
         @ldap.auth(dn, @password)
         @ldap.bind
       end
