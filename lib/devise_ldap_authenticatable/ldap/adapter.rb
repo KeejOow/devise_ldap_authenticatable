@@ -3,7 +3,7 @@ require "net/ldap"
 module Devise
   module LDAP
     DEFAULT_GROUP_UNIQUE_MEMBER_LIST_KEY = 'uniqueMember'
-    
+
     module Adapter
       def self.valid_credentials?(login, password_plaintext)
         options = {:login => login,
@@ -31,6 +31,15 @@ module Devise
 
       def self.ldap_connect(login)
         options = {:login => login,
+                   :ldap_auth_username_builder => ::Devise.ldap_auth_username_builder,
+                   :admin => ::Devise.ldap_use_admin_to_bind}
+
+        resource = Devise::LDAP::Connection.new(options)
+      end
+
+      def self.ldap_secure_connect(login, password_plaintext)
+        options = {:login => login,
+                   :password => password_plaintext,
                    :ldap_auth_username_builder => ::Devise.ldap_auth_username_builder,
                    :admin => ::Devise.ldap_use_admin_to_bind}
 
